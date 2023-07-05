@@ -1,0 +1,28 @@
+name: "pretrain"
+replay_buffer_size: ${overrides.replay_buffer_size}
+model_dir: ${overrides.model_dir}
+
+agent:
+  obs_dim: ???
+  action_dim: ???
+  layer_size: 256
+  num_hidden_layer: 3
+
+policy_eval: ${overrides.policy_eval}
+bc_prior: ${overrides.bc_prior}
+dynamics: ${overrides.dynamics}
+
+algorithm_cfg:
+  batch_size: 512
+  max_epochs_since_last_update: 5
+  use_best_parameters: true          # Use the best model parameters using val loss (model learning & policy learning)
+  save_best_parameters: false
+  save_snapshot_gap: 10
+  num_total_epochs:
+  max_grad_steps:
+  holdout_pct: 0.2
+  max_logging: 10000
+  timeout:
+
+get_module_path: rlkit.examples.algorithms.pretrain.prepare_models_and_trainers
+get_algo_path: rlkit.examples.algorithms.pretrain.prepare_generic_rl_algorithm

@@ -1,0 +1,63 @@
+# Environment-related
+env: "halfcheetah" #
+classdef:                   # The path to the environment class
+d4rl_config: ???            # E.g., "medium-expert-v2"
+term_func: ${env.term_func} # Termination function of the environment
+reward_func: ${env.reward_func}
+obs_preproc: ${env.obs_preproc} # Identity function.. Could use ${env.obs_preproc} instead
+obs_postproc: ${env.obs_postproc}
+targ_proc: ${env.targ_proc}
+
+use_true_reward: false      # Set to true if the true reward function of the environment is used
+replay_buffer_size: 2e6
+collector_type: "path"      # 'step' -- one sample at a time, 'path' -- a path at a time
+model_dir:                  # Specify the root directory to find for state_dicts
+
+indep_var:
+exp_name: 
+  - LCB_${overrides.trainer_cfg.lcb_coeff}
+  - DOF_${overrides.trainer_cfg.t_dist_dof}
+
+trainer_cfg: 
+  horizon: ???
+  lamb:
+  lcb_coeff: 1.0                        # for LCB, c of 'mu - c * std'
+  weighting: adaptive                            # 'adaptive' or 'fixed'
+  use_t_dist: false
+  t_dist_dof: 2.0
+  num_qfs: 20
+  lr: 3e-4
+  soft_target_tau: 5e-3
+  target_update_period: 1
+  use_automatic_entropy_tuning: true
+  reward_scale: 1           # in SAC paper, it's tuned to 5, but rlkit uses 1
+  discount: 0.99
+  track_grad_norm: false
+  eta: 1
+  num_particles: ${overrides.dynamics.num_elites}
+  init_alpha: 1
+  sampling_method: min
+  indep_sampling: true
+  on_policy: true
+
+dynamics:
+  _target_: rlkit.torch.models.dynamics_models.model.DynamicsModel
+  ensemble_model:
+    _target_: rlkit.torch.models.probabilistic_ensemble.ProbabilisticEnsemble
+    ensemble_size: 20
+    propagation_method: "all"
+    layer_size: 200
+    num_hidden_layer: 4
+    activation_func: torch.relu
+    use_decay: false                  # Offline RL may not need weight decaying?
+  learn_reward: true                  # Whether to learn the reward model as well
+  separate_reward_func: true          # Whether to instantiate a separate module for the reward function
+  learn_logstd_min_max: true          # If a deterministic ensemble is used, this need to be set to False
+  num_elites: 20
+  normalize_inputs: true
+  normalize_outputs: true
+  clip_obs: true
+
+offline_cfg:
+  checkpoint_type: behavior         # behavior, learned
+  checkpoint_name:

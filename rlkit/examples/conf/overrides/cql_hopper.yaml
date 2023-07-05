@@ -1,0 +1,41 @@
+# Environment-related
+env: "hopper" #
+classdef:                         # The path to the environment class
+d4rl_config: ???                  # E.g., "medium-expert-v2"
+term_func: ${env.term_func}       # Termination function of the environment
+reward_func: ${env.reward_func}
+obs_preproc: rlkit.envs.env_processor.DefaultEnvProc.obs_preproc # Identity function.. Could use ${env.obs_preproc} instead
+obs_postproc: rlkit.envs.env_processor.DefaultEnvProc.obs_postproc
+
+replay_buffer_size: 1e6
+collector_type: "step"      # 'step' -- one sample at a time, 'path' -- a path at a time
+model_dir:                  # Specify the root directory to find for state_dicts
+
+indep_var:
+exp_name:
+
+trainer_cfg:
+  discount: 0.99
+  reward_scale: 1
+  policy_lr: 1e-4
+  qf_lr: 3e-4
+  soft_target_tau: 5e-3
+  use_automatic_entropy_tuning: true
+
+  # min Q
+  temp: 1.0
+  min_q_version: 3
+  min_q_weight: 10.0      # As suggested in https://github.com/aviralkumar2907/CQL/issues/5#issuecomment-834009483
+
+  # Lagrange
+  with_lagrange: true     # defaults to true
+  lagrange_thresh: -1     # As suggested in https://github.com/aviralkumar2907/CQL/issues/5#issuecomment-834009483
+
+  # extra params
+  max_q_backup: false
+  deterministic_backup: true
+  num_random: 10
+
+  # gradient clipping / tracking
+  max_grad_norm:
+  track_grad_norm: true

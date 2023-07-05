@@ -1,0 +1,42 @@
+name: "mbrl"
+replay_buffer_size: ${overrides.replay_buffer_size}
+model_dir: ${overrides.model_dir}
+
+# These are here for plotting (see `rlkit.examples.misc.py`)
+agent:
+  obs_dim: ???
+  action_dim: ???
+  layer_size: 256
+  num_hidden_layer: 3
+
+sampling_cfg:
+  type:
+  penalty_coeff:
+  pessimism_coeff:
+
+use_value_func: ${overrides.use_value_func}
+use_behavior_clone: ${overrides.use_behavior_clone}
+
+dynamics:
+  _target_: ${overrides.dynamics._target_}
+  ensemble_model: ${overrides.dynamics.ensemble_model}
+  learn_reward: ${overrides.dynamics.learn_reward}
+  separate_reward_func: ${overrides.dynamics.separate_reward_func}
+  learn_logstd_min_max: ${overrides.dynamics.learn_logstd_min_max}
+  learning_rate: ${overrides.dynamics.learning_rate}
+  batch_size: ${overrides.dynamics.batch_size}
+  num_elites: ${overrides.dynamics.num_elites}
+  max_epochs_since_last_update: ${overrides.dynamics.max_epochs_since_last_update}
+  num_model_learning_epochs: ${overrides.dynamics.num_model_learning_epochs}
+  normalize_inputs: ${overrides.dynamics.normalize_inputs}
+  normalize_outputs: ${overrides.dynamics.normalize_outputs}
+
+algorithm_cfg:
+  batch_size: 256
+  num_model_learning_epochs: ${overrides.dynamics.num_model_learning_epochs}  # Model learning epochs (default: None)
+  max_epochs_since_last_update: 5
+  use_best_parameters: true          # Use the best model parameters using val loss (model learning & policy learning)
+  timeout:
+
+get_module_path: rlkit.examples.algorithms.mbrl.prepare_models_and_trainers
+get_algo_path: rlkit.examples.algorithms.mbrl.prepare_generic_rl_algorithm

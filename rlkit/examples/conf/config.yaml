@@ -1,0 +1,52 @@
+defaults:
+  - algorithm: ???
+  - env: ???
+  - overrides: ${algorithm}_${env}
+  - action_optimizer:
+  - _self_
+
+seed: 0
+device:
+save_video: false
+is_offline: ???
+dataset_fn:
+max_size:
+
+# Logging
+tabular_log_file: "progress.csv"
+text_log_file: "debug.csv"
+include_date: true
+log_to_wandb: ???
+debug_mode: false
+log_option:
+group_name:
+WANDB_PROJECT:
+entity:
+info:
+sweep: false
+sweep_variations:             # can be customized in sweep yaml file 
+
+# Load & checkpoint parameters
+cache_dir:
+eval_policy: false            # just evaluate the learned policy loaded from `cache_dir`
+f_checkpoint_name:
+save_dir:
+snapshot_mode:
+upload_to_wandb: false        # Set to true if you want to upload snapshot files to wandb
+
+experiment: default
+
+root_dir: "./exp"
+hydra:
+  run:
+    dir: ${root_dir}/${algorithm.name}/${experiment}/${overrides.env}/${now:%Y.%m.%d}/${now:%H%M%S}
+
+  sweep:
+    dir: ${root_dir}/${algorithm.name}/${experiment}/${overrides.env}/${now:%Y.%m.%d}/${now:%H%M%S}
+
+  job:
+    env_set:
+      # currently there are some issues with running sweeps alongside wandb
+      # https://github.com/wandb/client/issues/1314
+      # this env var fixes that (from github.com/ashleve/lightning-hydra-template)
+      WANDB_START_METHOD: thread

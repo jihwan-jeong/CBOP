@@ -1,0 +1,50 @@
+name: "mopo"
+replay_buffer_size: ${overrides.replay_buffer_size}
+collector_type: ${overrides.collector_type}
+model_dir: ${overrides.model_dir}
+
+eval_transition_model:      # true / false
+
+sampling_mode: disagreement
+sampling_cfg: ${overrides.sampling_cfg}
+
+agent:
+  _target_: rlkit.examples.algorithms.actor_critic.wrapper.SACAgent
+  discount: 1.0
+  layer_size: ${overrides.layer_size}
+  num_hidden_layer: ${overrides.num_hidden_layer}
+  hidden_init: torch.nn.init.xavier_uniform_
+  obs_dim: ???
+  action_dim: ???
+
+dynamics:
+  _target_: ${overrides.dynamics._target_}
+  ensemble_model: ${overrides.dynamics.ensemble_model}
+  learn_reward: ${overrides.dynamics.learn_reward}
+  separate_reward_func: ${overrides.dynamics.separate_reward_func}
+  learn_logstd_min_max: ${overrides.dynamics.learn_logstd_min_max}
+  learning_rate: ${overrides.dynamics.learning_rate}
+  batch_size: ${overrides.dynamics.batch_size}
+  num_elites: ${overrides.dynamics.num_elites}
+  max_epochs_since_last_update: ${overrides.dynamics.max_epochs_since_last_update}
+  num_model_learning_epochs: ${overrides.dynamics.num_model_learning_epochs}
+  normalize_inputs: ${overrides.dynamics.normalize_inputs}
+  normalize_outputs: ${overrides.dynamics.normalize_outputs}
+
+algorithm_cfg:
+  batch_size: 256
+  max_path_length: 1000               # The maximum path length for exploration / evaluation
+  num_epochs: ${overrides.algorithm_cfg.num_epochs}                    # The main training epochs of an RL algorithm
+  num_eval_steps_per_epoch: 5000
+  num_trains_per_train_loop: 1000
+  num_train_loops_per_epoch: 1        # Another loop within each epoch (default=1)
+  num_model_learning_epochs: ${overrides.dynamics.num_model_learning_epochs}  # Model learning epochs (default: None)
+  model_train_period: ${overrides.trainer_cfg.model_train_period}             # Number of steps until the next model training
+  max_epochs_since_last_update: 5
+  min_num_steps_before_training: 0    # Initial exploration with random policy
+  save_snapshot_gap: 100
+  train_at_start: true
+  timeout:
+
+get_module_path: rlkit.examples.algorithms.actor_critic.mbpo.prepare_models_and_trainers
+get_algo_path: rlkit.examples.algorithms.actor_critic.mbpo.prepare_generic_rl_algorithm

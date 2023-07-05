@@ -1,0 +1,29 @@
+name: "sac"
+replay_buffer_size: ${overrides.replay_buffer_size}
+collector_type: "path"
+model_dir: ${overrides.model_dir}
+
+agent:
+  _target_: rlkit.examples.algorithms.actor_critic.wrapper.SACAgent
+  obs_dim: ???
+  action_dim: ???
+  layer_size: 256
+  num_hidden_layer: 3
+  num_qfs: ${overrides.trainer_cfg.num_qfs}
+
+algorithm_cfg:
+  batch_size: 256
+  max_path_length: 1000               # The maximum path length for exploration
+  num_epochs: 3000                      # The main training epochs of an RL algorithm; not used in MPC-based algorithms
+  num_eval_steps_per_epoch: 5000
+  num_expl_steps_per_train_loop: 1000    # Each epoch can have multiple loops.. how many expl steps per loop
+  num_trains_per_train_loop: 1000        # this number // # expl steps per loop = # trains per expl step
+  num_train_loops_per_epoch: 1           # Another loop within each epoch (default=1)
+  min_num_steps_before_training: 1000    # Initial exploration with random policy
+  save_snapshot_gap: 100
+  save_best_parameters: true
+  rand_init_policy_before_training: true  # Use the random policy for initial exploration
+  timeout:
+
+get_module_path: rlkit.examples.algorithms.actor_critic.sac.prepare_models_and_trainers
+get_algo_path: rlkit.examples.algorithms.actor_critic.sac.prepare_generic_rl_algorithm

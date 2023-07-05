@@ -1,0 +1,18 @@
+# Environment-related
+env: "gym___HalfCheetah" #
+classdef:                         # The path to the environment class
+term_func: ${env.term_func}       # Termination function of the environment
+reward_func: ${env.reward_func}
+obs_preproc: rlkit.envs.env_processor.DefaultEnvProc.obs_preproc # Identity function.. Could use ${env.obs_preproc} instead
+obs_postproc: rlkit.envs.env_processor.DefaultEnvProc.obs_postproc
+
+replay_buffer_size: 1e6
+collector_type: "path"      # 'step' -- one sample at a time, 'path' -- a path at a time
+model_dir:                  # Specify the root directory to find for state_dicts
+
+indep_var:
+exp_name:
+
+trainer_cfg:
+  discount: 0.99
+  max_grad_norm:

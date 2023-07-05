@@ -1,0 +1,7 @@
+name: "hopper"
+
+obs_preproc: rlkit.envs.env_processor.DefaultEnvProc.obs_preproc    # Identity function
+obs_postproc: rlkit.envs.env_processor.DefaultEnvProc.obs_postproc
+targ_proc: rlkit.envs.env_processor.DefaultEnvProc.targ_proc        # Difference in states is learned
+term_func: rlkit.envs.termination_funcs.hopper
+reward_func: rlkit.envs.reward_funcs.hopper

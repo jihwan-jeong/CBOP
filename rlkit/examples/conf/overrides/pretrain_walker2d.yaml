@@ -1,0 +1,72 @@
+# Environment-related
+env: "walker2d" #
+classdef:                   # The path to the environment class
+d4rl_config: ???            # E.g., "medium-expert-v2"
+term_func: ${env.term_func} # Termination function of the environment
+reward_func: ${env.reward_func}
+obs_preproc: ${env.obs_preproc} # Identity function.. Could use ${env.obs_preproc} instead
+obs_postproc: ${env.obs_postproc}
+targ_proc: ${env.targ_proc}
+use_true_reward: false      # Set to true if the true reward function of the environment is used
+replay_buffer_size: 2e6
+collector_type: "step"      # 'step' -- one sample at a time, 'path' -- a path at a time
+model_dir:                  # Specify the root directory to find for state_dicts
+
+indep_var:
+exp_name:
+
+# Default values updated to be used for MVE not MBOP
+policy_eval:
+  _target_: rlkit.torch.models.ensemble.FlattenEnsembleMLP
+  train: ???
+  is_qf: true                         # true: Learn an action-value function; false: learn a state-value function
+  use_bootstrap: true                 # Use the value function to bootstrap the return at horizon H
+  ensemble_size: 20                   # The ensemble size of the value function
+  sampling_method: mean               # 'min', 'mean' or 'lcb'
+  num_steps_into_future: 1            # Value function is trained with n-step targets; the value of n is specified here
+  normalize_inputs: false             # Whether to standardize the inputs to the value model
+  normalize_outputs: false
+  num_hidden_layer: 3
+  activation_func: torch.relu
+  layer_size: 256
+  use_decay: false
+  batch_size: 512                     # Batch size when training the value model
+  discount: 0.99                      # Discount factor (used when generating n-step targets)
+  learning_rate: 1e-3                 # Learning rate for Adam optimizer when training the value network
+  num_value_learning_repeat: 3        # How many times should the dataset reconstructed for value learning
+
+dynamics:
+  _target_: rlkit.torch.models.dynamics_models.model.DynamicsModel
+  train: ???
+  ensemble_model:
+    _target_: rlkit.torch.models.probabilistic_ensemble.ProbabilisticEnsemble
+    ensemble_size: 20
+    propagation_method: "all"
+    layer_size: 200
+    num_hidden_layer: 4
+    activation_func: torch.relu       # Elu can also be an option (by MBOP author)
+    use_decay: false                  # Offline RL may not need weight decaying?
+  learn_reward: true                  # Whether to learn the reward model as well
+  separate_reward_func: true          # Whether to instantiate a separate module for the reward function
+  learn_logstd_min_max: true          # If a deterministic ensemble is used, this need to be set to False
+  learning_rate: 1e-3
+  batch_size: 512
+  max_epochs_since_last_update: 5
+  num_model_learning_epochs:
+  num_elites: 20
+  normalize_inputs: true
+  normalize_outputs: true
+
+bc_prior:
+  _target_: rlkit.policies.gaussian_policy.TanhGaussianPolicy
+  train: ???
+  layer_size: 256
+  num_hidden_layer: 3
+  learning_rate: 1e-3
+  batch_size: 512
+  activation_func: torch.relu
+  include_prev_action_as_input: false
+  use_decay: false
+  normalize_inputs: false
+  normalize_outputs: false
+  num_bc_learning_epochs:
